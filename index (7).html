@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSC Biology Ch-4: Hard MCQ Test</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .quiz-container {
+            background: #1e293b;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 600px;
+            border-top: 5px solid #3b82f6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 15px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #60a5fa;
+        }
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            line-height: 1.5;
+            color: #f1f5f9;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        button.option-btn {
+            background-color: #334155;
+            color: #e2e8f0;
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            text-align: left;
+            transition: all 0.2s ease;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+        button.option-btn:hover:not(:disabled) {
+            background-color: #475569;
+            border-color: #60a5fa;
+        }
+        button.option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+        .correct { 
+            background-color: #059669 !important; 
+            border-color: #10b981 !important;
+            color: #fff !important;
+        }
+        .wrong { 
+            background-color: #be123c !important; 
+            border-color: #f43f5e !important;
+            color: #fff !important;
+        }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #0f172a;
+            font-size: 0.95rem;
+            display: none;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-left: 4px solid #3b82f6;
+        }
+        #next-btn {
+            margin-top: 25px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            display: none;
+            font-weight: 600;
+            font-family: 'Hind Siliguri', sans-serif;
+            transition: background 0.3s;
+        }
+        #next-btn:hover { background-color: #2563eb; }
+        .score-board {
+            text-align: center;
+            display: none;
+        }
+        .score-board h2 {
+            font-size: 2rem;
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+        .score-board p {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+        }
+        .restart-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+        .restart-btn:hover { background-color: #059669; }
+        .progress {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz">
+        <div class="header">
+            <h1>জীবনীশক্তি ও শ্বসন (Bioenergetics & Respiration)</h1>
+            <p>Based entirely on Biology Seekers Lectures 1-5</p>
+        </div>
+        <div class="progress" id="progress">Question 1 of 10</div>
+        <h2 id="question">Loading...</h2>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+        <button id="next-btn" onclick="nextQuestion()">পরবর্তী প্রশ্ন (Next)</button>
+    </div>
+
+    <div class="score-board" id="score-board">
+        <h2>টেস্ট সমাপ্ত!</h2>
+        <p>আপনার স্কোর: <span id="score">0</span> / <span id="total">0</span></p>
+        <button class="restart-btn" onclick="location.reload()">আবার শুরু করুন (Restart)</button>
+    </div>
+</div>
+
+<script>
+    // 15 Hard Questions extracted strictly from the 5 video lectures.
+    const rawQuestions = [
+        {
+            question: "গ্লাইকোলাইসিসের প্রথম ধাপে গ্লুকোজের ৬ নম্বর কার্বনে একটি অজৈব ফসফেট (Pi) যুক্ত করে Glucose-6-phosphate তৈরি করা হয় কেন?",
+            options: [
+                "গ্লুকোজ যেন তার রূপ পরিবর্তন করে কোষ থেকে বের হয়ে যেতে না পারে",
+                "অতিরিক্ত ATP উৎপাদনের জন্য গ্লুকোজকে উদ্দীপ্ত করতে",
+                "গ্লুকোজকে সরাসরি মাইটোকন্ড্রিয়ায় প্রবেশ করানোর জন্য",
+                "কোষের অভ্যন্তরে pH ব্যালেন্স ঠিক রাখার জন্য"
+            ],
+            answer: "গ্লুকোজ যেন তার রূপ পরিবর্তন করে কোষ থেকে বের হয়ে যেতে না পারে",
+            rationale: "লেকচার ৪-এ ব্যাখ্যা করা হয়েছে, সেলে গ্লুকোজ ঢোকার পর তা যেন একই রূপে বের হতে না পারে, সেজন্য ১টি ATP খরচ করে ফসফেট যুক্ত করে একে ট্র্যাপ বা আটকে ফেলা হয়।"
+        },
+        {
+            question: "ইনঅর্গানিক ফসফেট (Pi) কে কেন 'অজৈব' (Inorganic) বলা হয়?",
+            options: [
+                "কারণ এতে হাইড্রোজেন ও অক্সিজেন থাকলেও কার্বন (Carbon) থাকে না",
+                "কারণ এটি মাইটোকন্ড্রিয়ার বাইরে তৈরি হয়",
+                "কারণ এটি শুধুমাত্র মৃত কোষে পাওয়া যায়",
+                "কারণ এটি সূর্যালোক ছাড়া বিক্রিয়া করতে পারে না"
+            ],
+            answer: "কারণ এতে হাইড্রোজেন ও অক্সিজেন থাকলেও কার্বন (Carbon) থাকে না",
+            rationale: "লেকচার ১-এ স্পষ্ট বলা হয়েছে, জৈব যৌগ হতে হলে কার্বন ও হাইড্রোজেন থাকতে হয়। Pi (H3PO4) তে হাইড্রোজেন আছে কিন্তু কার্বন নেই, তাই এটি অজৈব।"
+        },
+        {
+            question: "১ অণু গ্লুকোজ থেকে সম্পূর্ণ সবাত শ্বসনে (Aerobic Respiration) যে ৩৮টি ATP পাওয়া যায়, তার মধ্যে ঠিক কয়টি ATP ক্রেবস চক্র (Krebs cycle) থেকে উৎপন্ন হয়?",
+            options: [
+                "২৪টি",
+                "৬টি",
+                "৮টি",
+                "৩৮টি"
+            ],
+            answer: "২৪টি",
+            rationale: "লেকচার ৪ অনুযায়ী, ২ অণু অ্যাসিটাইল কো-এ থেকে ক্রেবস চক্রে ৬টি NADH2 (১৮ ATP), ২টি FADH2 (৪ ATP) এবং ২টি GTP (২ ATP) উৎপন্ন হয়। মোট ১৮+৪+২ = ২৪টি ATP।"
+        },
+        {
+            question: "ইলেকট্রন ট্রান্সপোর্ট চেইনে (ETS) প্রোটন (H+) ম্যাট্রিক্স থেকে কোথায় স্থানান্তরিত হয় এবং এর কারণ কী?",
+            options: [
+                "ইন্টারমেমব্রেনাস স্পেসে; কারণ ম্যাট্রিক্সে H+ এর ঘনত্ব বেড়ে যায়",
+                "সাইটোপ্লাজমে; কারণ কোষের অম্লত্ব কমানো প্রয়োজন",
+                "স্ট্রোমাতে; কারণ সালোকসংশ্লেষণের জন্য এটি অপরিহার্য",
+                "আউটার মেমব্রেনের বাইরে; ব্যাপন চাপের কারণে"
+            ],
+            answer: "ইন্টারমেমব্রেনাস স্পেসে; কারণ ম্যাট্রিক্সে H+ এর ঘনত্ব বেড়ে যায়",
+            rationale: "লেকচার ৫ অনুযায়ী, NADH2 ভাঙার ফলে ম্যাট্রিক্সে H+ (প্রোটন) এর পরিমাণ বেড়ে যায়, তাই ব্যালেন্স করতে এগুলোকে ইনার ও আউটার মেমব্রেনের মাঝের ফাঁকা জায়গায় (Intermembrane space) পাঠানো হয়।"
+        },
+        {
+            question: "মাইটোকন্ড্রিয়ায় ইলেকট্রন ট্রান্সপোর্ট সিস্টেমের একেবারে শেষ ধাপে ইলেকট্রন ও প্রোটন কার সাথে যুক্ত হয়ে মেটাবলিক পানি (H2O) তৈরি করে?",
+            options: [
+                "অক্সিজেন (O2)",
+                "কার্বন ডাই-অক্সাইড (CO2)",
+                "NADP+",
+                "ATP সিন্থেস"
+            ],
+            answer: "অক্সিজেন (O2)",
+            rationale: "লেকচার ৫-এ বলা হয়েছে, বাইরে থেকে গ্রহণ করা অক্সিজেন ম্যাট্রিক্সে থাকা প্রোটন ও আগত ইলেকট্রনের শক্তির সাহায্যে যুক্ত হয়ে পানি তৈরি করে।"
+        },
+        {
+            question: "সালোকসংশ্লেষণে 'আলোক-নির্ভর পর্যায়ে' (Light-dependent phase) সূর্যালোক মূলত কোন দুটি কাজ করে?",
+            options: [
+                "পানিকে ভাঙা (Photolysis) এবং ADP ও Pi কে যুক্ত করে ATP বানানো",
+                "CO2 কে গ্লুকোজে পরিণত করা এবং প্রোটন পাম্প করা",
+                "অক্সিজেন গ্রহণ করা এবং কার্বন ডাই-অক্সাইড ত্যাগ করা",
+                "রুবিস্কো এনজাইম সক্রিয় করা এবং স্ট্রোমা তৈরি করা"
+            ],
+            answer: "পানিকে ভাঙা (Photolysis) এবং ADP ও Pi কে যুক্ত করে ATP বানানো",
+            rationale: "লেকচার ২ অনুযায়ী, সূর্যালোক গ্রানামে পানিকে ভাঙে (ফটোলাইসিস) এবং শক্তি দিয়ে ADP ও Pi কে যুক্ত করে ATP তৈরি করে (ফটোফসফোরাইলেশন)।"
+        },
+        {
+            question: "অ্যাসিটাইল কো-এ (Acetyl-CoA) তৈরির ধাপে ৩-কার্বন বিশিষ্ট পাইরুভিক এসিড থেকে ২-কার্বন বিশিষ্ট যৌগ তৈরি হয়। বাকি একটি কার্বন কোথায় যায়?",
+            options: [
+                "CO2 হিসেবে নির্গত হয়ে যায়",
+                "ATP এর সাথে যুক্ত হয়ে যায়",
+                "পানির অণুর সাথে মিশে যায়",
+                "এটি গ্লুকোজে ফিরে যায়"
+            ],
+            answer: "CO2 হিসেবে নির্গত হয়ে যায়",
+            rationale: "লেকচার ৪-এ বলা হয়েছে, ১টি কার্বন CO2 গ্যাস হিসেবে রিলিজ হয়ে যায়, যা আমরা নিঃশ্বাসের মাধ্যমে ত্যাগ করি।"
+        },
+        {
+            question: "অ্যাসিটাইল কো-এ এবং ক্রেবস চক্রে উৎপন্ন NADH2 ও FADH2 কে লেকচারে 'চেক বই' এর সাথে তুলনা করা হয়েছে কেন?",
+            options: [
+                "কারণ এগুলো সরাসরি শক্তি হিসেবে ব্যবহার করা যায় না, ইলেকট্রন ট্রান্সপোর্ট চেইনে ভাঙিয়ে ATP বা 'কয়েন' এ রূপান্তর করতে হয়",
+                "কারণ এগুলো কোষে সঞ্চিত থাকে এবং কখনোই ভাঙা যায় না",
+                "কারণ এগুলো শুধুমাত্র উদ্ভিদ কোষে পাওয়া যায়",
+                "কারণ এগুলো থেকে সরাসরি প্রোটিন তৈরি হয়"
+            ],
+            answer: "কারণ এগুলো সরাসরি শক্তি হিসেবে ব্যবহার করা যায় না, ইলেকট্রন ট্রান্সপোর্ট চেইনে ভাঙিয়ে ATP বা 'কয়েন' এ রূপান্তর করতে হয়",
+            rationale: "শিক্ষকের লেকচার ৩ ও ৪ অনুযায়ী, সেল শুধুমাত্র ATP নামক 'কয়েন' ব্যবহার করতে পারে। NADH2 কে অক্সিজোমে গিয়ে ভাঙিয়ে তবেই ATP পাওয়া যায়।"
+        },
+        {
+            question: "প্রোক্যারিওটিক বা আদিকোষে (যেমন- ব্যাকটেরিয়া) সবাত শ্বসনের কোন ধাপটি সংঘটিত হতে পারে এবং কেন?",
+            options: [
+                "শুধুমাত্র গ্লাইকোলাইসিস; কারণ তাদের কোষে মাইটোকন্ড্রিয়া থাকে না",
+                "ক্রেবস চক্র; কারণ এটি সাইটোপ্লাজমে ঘটে",
+                "ইলেকট্রন ট্রান্সপোর্ট চেইন; কারণ তাদের কোষে প্লাস্টিড থাকে",
+                "কোনো ধাপই সংঘটিত হয় না"
+            ],
+            answer: "শুধুমাত্র গ্লাইকোলাইসিস; কারণ তাদের কোষে মাইটোকন্ড্রিয়া থাকে না",
+            rationale: "লেকচার ৩ অনুযায়ী, গ্লাইকোলাইসিস সাইটোপ্লাজমে হয় যা ব্যাকটেরিয়াতে আছে। কিন্তু ক্রেবস চক্র বা ETS এর জন্য মাইটোকন্ড্রিয়া প্রয়োজন, যা আদিকোষে থাকে না।"
+        },
+        {
+            question: "সালোকসংশ্লেষণের আলোক নিরপেক্ষ পর্যায়ে (কেলভিন চক্র) গ্লুকোজ তৈরির জন্য প্রয়োজনীয় হাইড্রোজেন (H+) কোথা থেকে আসে?",
+            options: [
+                "গ্রানাম থেকে NADPH তা বহন করে স্ট্রোমাতে নিয়ে আসে",
+                "মাটি থেকে সরাসরি স্ট্রোমাতে প্রবেশ করে",
+                "বাতাসের কার্বন ডাই-অক্সাইড থেকে পাওয়া যায়",
+                "মাইটোকন্ড্রিয়া থেকে কোষের সাইটোপ্লাজমে আসে"
+            ],
+            answer: "গ্রানাম থেকে NADPH তা বহন করে স্ট্রোমাতে নিয়ে আসে",
+            rationale: "লেকচার ২-এ দেখানো হয়েছে, গ্রানামে পানি ভেঙে যে H+ পাওয়া যায়, তা NADP+ গ্রহণ করে NADPH হিসেবে স্ট্রোমাতে কেলভিন চক্রে নিয়ে যায়।"
+        },
+        {
+            question: "ATP সিন্থেস (ATP Synthase) এনজাইমের কাজ কী এবং এটি কীভাবে কাজ করে?",
+            options: [
+                "ইন্টারমেমব্রেনাস স্পেস থেকে প্রোটন (H+) তীব্র ব্যাপন চাপে ম্যাট্রিক্সে ঢোকার সময় যে শক্তি উৎপন্ন হয়, তা দিয়ে ADP ও Pi যুক্ত করে ATP তৈরি করে",
+                "ম্যাট্রিক্স থেকে প্রোটন বের করে দেয় এবং সরাসরি গ্লুকোজ তৈরি করে",
+                "NADH2 কে ভেঙে অক্সিজেন ও পানি তৈরি করে",
+                "ফটোলাইসিস প্রক্রিয়ায় সাহায্য করে"
+            ],
+            answer: "ইন্টারমেমব্রেনাস স্পেস থেকে প্রোটন (H+) তীব্র ব্যাপন চাপে ম্যাট্রিক্সে ঢোকার সময় যে শক্তি উৎপন্ন হয়, তা দিয়ে ADP ও Pi যুক্ত করে ATP তৈরি করে",
+            rationale: "লেকচার ৫ এর শেষ অংশে খুব পরিষ্কারভাবে এনিমেশনের মাধ্যমে দেখানো হয়েছে কিভাবে H+ এর ফোর্সে ADP ও Pi যুক্ত হয়ে ATP হয়।"
+        },
+        {
+            question: "একটি FADH2 এবং একটি GTP থেকে যথাক্রমে কয়টি ATP পাওয়া যায়?",
+            options: [
+                "২টি এবং ১টি",
+                "৩টি এবং ১টি",
+                "১টি এবং ২টি",
+                "৩টি এবং ২টি"
+            ],
+            answer: "২টি এবং ১টি",
+            rationale: "লেকচার ৪ অনুযায়ী, 1 NADH2 = 3 ATP, 1 FADH2 = 2 ATP, এবং 1 GTP = 1 ATP।"
+        },
+        {
+            question: "গ্লাইকোলাইসিসে মোট কয়টি ATP উৎপন্ন হয় এবং নিট (Net) কতটি ATP পাওয়া যায়?",
+            options: [
+                "মোট ৪টি উৎপন্ন হয়, নিট পাওয়া যায় ২টি (যেহেতু ২টি খরচ হয়ে যায়)",
+                "মোট ১০টি উৎপন্ন হয়, নিট পাওয়া যায় ৮টি",
+                "মোট ৬টি উৎপন্ন হয়, নিট পাওয়া যায় ৪টি",
+                "মোট ৩৮টি উৎপন্ন হয়, নিট পাওয়া যায় ২৪টি"
+            ],
+            answer: "মোট ৪টি উৎপন্ন হয়, নিট পাওয়া যায় ২টি (যেহেতু ২টি খরচ হয়ে যায়)",
+            rationale: "লেকচার ৪ এর ব্যাখ্যায় বলা হয়েছে, সরাসরি ৪টি তৈরি হয় এবং ২টি খরচ হয়। (পরোক্ষভাবে NADH2 সহ হিসাব করলে ১০টি থেকে ৮টি হয়, তবে সরাসরি উৎপাদনে ৪ ও ২ এর হিসাবটি মৌলিক)।"
+        },
+        {
+            question: "১ মোল ATP আর্দ্রবিশ্লিষ্ট হলে কত শক্তি নির্গত হয়?",
+            options: [
+                "৭.৩ কিলো ক্যালরি",
+                "৬৮৬ কিলো ক্যালরি",
+                "৩০.৫৫ কিলো ক্যালরি",
+                "৪.২ কিলো জুল"
+            ],
+            answer: "৭.৩ কিলো ক্যালরি",
+            rationale: "লেকচার ৩ এ বলা হয়েছে, ১টি ATP ভাঙলে 7.3 kcal শক্তি নির্গত হয়।"
+        },
+        {
+            question: "শ্বসনকে কেন 'জৈব রাসায়নিক প্রক্রিয়া' (Biochemical process) বলা হয়?",
+            options: [
+                "কারণ এই রাসায়নিক বিক্রিয়াগুলো শুধুমাত্র জীবিত জীবের (Bio/Life) কোষে ঘটে",
+                "কারণ এতে অজৈব যৌগের কোনো ব্যবহার নেই",
+                "কারণ এটি শুধুমাত্র সূর্যালোকের উপস্থিতিতে ঘটে",
+                "কারণ এটি গবেষণাগারে কৃত্রিমভাবে তৈরি করা যায়"
+            ],
+            answer: "কারণ এই রাসায়নিক বিক্রিয়াগুলো শুধুমাত্র জীবিত জীবের (Bio/Life) কোষে ঘটে",
+            rationale: "লেকচার ৩ অনুযায়ী, Bio মানে জীবন। মৃত বডিতে এটি হয় না। জীবিত বডিতে কেমিক্যাল রিঅ্যাকশন হয় দেখেই একে বায়োকেমিক্যাল প্রসেস বলে।"
+        }
+    ];
+
+    // Variables
+    let shuffledQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    const totalQuestionsToShow = 10; // Out of 15, we show 10 per session for randomness
+
+    // DOM Elements
+    const progressEl = document.getElementById("progress");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const nextBtn = document.getElementById("next-btn");
+    const quizEl = document.getElementById("quiz");
+    const scoreBoardEl = document.getElementById("score-board");
+
+    // Initialize Quiz
+    function startQuiz() {
+        // Shuffle the full pool of 15 questions and pick 10
+        shuffledQuestions = [...rawQuestions].sort(() => Math.random() - 0.5).slice(0, totalQuestionsToShow);
+        currentQuestionIndex = 0;
+        score = 0;
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        nextBtn.style.display = "none";
+        feedbackEl.style.display = "none";
+        optionsEl.innerHTML = "";
+        
+        const currentData = shuffledQuestions[currentQuestionIndex];
+        
+        progressEl.innerText = `প্রশ্ন ${currentQuestionIndex + 1} / ${totalQuestionsToShow}`;
+        questionEl.innerText = currentData.question;
+
+        // Shuffle options
+        let shuffledOptions = [...currentData.options].sort(() => Math.random() - 0.5);
+
+        shuffledOptions.forEach(option => {
+            const button = document.createElement("button");
+            button.classList.add("option-btn");
+            button.innerText = option;
+            button.onclick = () => selectAnswer(button, currentData);
+            optionsEl.appendChild(button);
+        });
+    }
+
+    function selectAnswer(selectedButton, currentData) {
+        const allButtons = optionsEl.querySelectorAll("button");
+        allButtons.forEach(btn => btn.disabled = true); // Disable all buttons
+
+        const isCorrect = selectedButton.innerText === currentData.answer;
+
+        if (isCorrect) {
+            selectedButton.classList.add("correct");
+            score++;
+        } else {
+            selectedButton.classList.add("wrong");
+            // Highlight the correct one automatically
+            allButtons.forEach(btn => {
+                if (btn.innerText === currentData.answer) {
+                    btn.classList.add("correct");
+                }
+            });
+        }
+
+        // Show rationale/feedback
+        feedbackEl.innerHTML = `<strong>ব্যাখ্যা:</strong> ${currentData.rationale}`;
+        feedbackEl.style.display = "block";
+        nextBtn.style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < shuffledQuestions.length) {
+            loadQuestion();
+        } else {
+            showScore();
+        }
+    }
+
+    function showScore() {
+        quizEl.style.display = "none";
+        scoreBoardEl.style.display = "block";
+        document.getElementById("score").innerText = score;
+        document.getElementById("total").innerText = totalQuestionsToShow;
+    }
+
+    // Run on load
+    startQuiz();
+</script>
+
+</body>
+</html>
